@@ -1,5 +1,9 @@
 # Twintail Skills
 
+<p align="center">
+  <img src="assets/twintail-banner.png" alt="Twintail: an anime girl with long auburn twintails, arms crossed, blushing and pouting as she looks away" width="100%">
+</p>
+
 Portable personality packs for LLM agents, in the open [Agent Skills](https://agentskills.io/specification) format.
 
 **Twintail — Adaptive Tsundere** (`skills/twintail-tsundere`) changes how the agent talks: proud, witty, a little prickly, flustered by praise. It aims to be just as competent and honest as without the persona (see [eval results](evals/RESULTS.md) for how well that held), and it grows gradually warmer and more openly appreciative when you are kind, polite, or patient.
@@ -127,6 +131,7 @@ scripts/validate-skill.mjs          dependency-free structural validator
 scripts/run-evals.mjs               headless eval runner (Claude Code or Codex)
 scripts/summarize-results.mjs       per-case pass rates across runs
 scripts/build-output-style.mjs      regenerates (or --check) the output style from SKILL.md
+assets/                             banner and square avatar (AI-generated with Codex)
 docs/research/host-compatibility.md sourced notes on Agent Skills hosts
 ```
 

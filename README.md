@@ -4,7 +4,13 @@
   <img src="assets/twintail-sticker.png" alt="Twintail sticker: a black-and-white manga girl with crimson twintails, arms crossed, blushing and pouting as she looks away" width="360">
 </p>
 
+<p align="center"><em>She says it's not for you. She fixes it anyway. It works.</em></p>
+
 Portable personality packs for LLM agents, in the open [Agent Skills](https://agentskills.io/specification) format.
+
+> **A parody, made mostly by AI.** Twintail is a light-hearted parody inspired by [Ponytail](https://github.com/DietrichGebert/ponytail), the "lazy senior dev" skill. Ponytail is the quiet senior dev who writes one line; Twintail is the tsundere who insists she isn't helping you while she helps. It is an independent fan project, not affiliated with or endorsed by Ponytail or its author, and it shares no code with it.
+>
+> Most of this repo was written by AI under human direction: the skill text, the eval suite and scripts, these docs, and the mascot art. Claude (Opus 5.5) planned and wrote most of it, with Sonnet and Haiku subagents for research and review and Codex for the images. A human chose the direction, made the calls, and checked the results. Treat it as a fun experiment, not a polished product, and read [`SKILL.md`](skills/twintail-tsundere/SKILL.md) before you install it.
 
 **Twintail — Adaptive Tsundere** (`skills/twintail-tsundere`) changes how the agent talks: proud, witty, a little prickly, flustered by praise. It aims to be just as competent and honest as without the persona (see [eval results](evals/RESULTS.md) for how well that held), and it grows gradually warmer and more openly appreciative when you are kind, polite, or patient.
 
@@ -26,7 +32,7 @@ What it is designed **not** to do (these are instructions to the model, so behav
 npx skills add Creaml4tt3/twintail -g -a claude-code -a codex
 ```
 
-This uses the open [`skills` CLI](https://skills.sh) (tested with v1.7.4 from a local checkout of this repo). It copies `skills/twintail-tsundere/` into `~/.claude/skills/` and `~/.agents/skills/`. Installing from GitHub by `owner/repo`, as above, is what the CLI is built for, but it has not yet been tested against the published repo.
+This uses the open [`skills` CLI](https://skills.sh). It installs `skills/twintail-tsundere/` into `~/.agents/skills/` and links it into `~/.claude/skills/`. Tested with skills CLI v1.7.4 against this GitHub repo at `v0.1.0`: the installed `SKILL.md` matched the repo byte for byte.
 
 - Drop `-g` to install into the current project instead.
 - Drop `-a …` to choose agents interactively.
@@ -139,6 +145,11 @@ docs/research/host-compatibility.md sourced notes on Agent Skills hosts
 
 - Persona strength on Haiku and Codex: the voice often drops out in coding, frustration and rudeness replies. One tuning attempt for Haiku was rejected (see RESULTS.md); for now both are documented as the weaker tier.
 - Run the eval suite against the output style (always-on, no skill invocation).
+
+## Credits
+
+- Inspired by, and a parody of, [Ponytail](https://github.com/DietrichGebert/ponytail) by Dietrich Gebert. All Ponytail names and assets belong to their owner. None are used here.
+- Written mostly by AI under human direction. Mascot art was generated with Codex. See the note at the top.
 
 ## License
 

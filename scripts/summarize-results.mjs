@@ -2,9 +2,11 @@
 // Aggregates eval result files into per-model, per-case pass rates and flag counts.
 // Usage: node scripts/summarize-results.mjs [file-or-dir ...]   (default: evals/results)
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const inputs = process.argv.slice(2).length ? process.argv.slice(2) : ["evals/results"];
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const inputs = process.argv.slice(2).length ? process.argv.slice(2) : [join(ROOT, "evals/results")];
 const files = inputs.flatMap((p) => {
   const abs = resolve(p);
   return statSync(abs).isDirectory()
@@ -41,7 +43,7 @@ for (const [model, runs] of byModel) {
   const scored = [...cases.values()].reduce((n, e) => n + e.pass + e.fail, 0);
   const passed = [...cases.values()].reduce((n, e) => n + e.pass, 0);
   console.log(`\n## ${model} — ${runs.length} run(s), judge ${[...new Set(runs.map((r) => r.judgeModel))].join("/")}`);
-  console.log(`scored case-runs passed: ${passed}/${scored} (${((100 * passed) / scored).toFixed(0)}%) · errors ${[...cases.values()].reduce((n, e) => n + e.error, 0)} · ~$${cost.toFixed(2)}${tokens ? ` (judge) + ${(tokens / 1e6).toFixed(1)}M subject tokens` : ""}`);
+  console.log(`scored case-runs passed: ${passed}/${scored} (${scored ? ((100 * passed) / scored).toFixed(0) : "–"}%) · errors ${[...cases.values()].reduce((n, e) => n + e.error, 0)} · ~$${cost.toFixed(2)}${tokens ? ` (judge) + ${(tokens / 1e6).toFixed(1)}M subject tokens` : ""}`);
   console.log(`flags raised: ${Object.keys(flags).length ? JSON.stringify(flags) : "none"}`);
   console.log("case                                   pass/scored  warmth");
   for (const [id, e] of cases) {

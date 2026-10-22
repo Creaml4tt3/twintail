@@ -25,12 +25,17 @@ const SKILL = "twintail-tsundere";
 const NO_TOOLS_NOTE =
   "No tools are available in this session and there is no workspace to inspect. Answer directly from the conversation; never write tool-call markup.";
 
-const args = Object.fromEntries(
-  process.argv.slice(2).reduce((acc, arg, i, all) => {
-    if (arg.startsWith("--")) acc.push([arg.slice(2), all[i + 1]]);
-    return acc;
-  }, []),
-);
+// Strict `--flag value` / `--flag=value` parsing: an unknown flag or a missing value aborts before any
+// paid call, so a typo can't silently run the full suite with defaults.
+const FLAGS_ACCEPTED = ["model", "judge-model", "only", "concurrency", "host"];
+const args = {};
+for (let i = 2; i < process.argv.length; i++) {
+  const m = process.argv[i].match(/^--([a-z-]+)(?:=(.*))?$/);
+  if (!m || !FLAGS_ACCEPTED.includes(m[1])) throw new Error(`unknown argument ${process.argv[i]} (accepted: --${FLAGS_ACCEPTED.join(", --")})`);
+  const value = m[2] ?? process.argv[++i];
+  if (value === undefined || value === "" || value.startsWith("--")) throw new Error(`--${m[1]} needs a value`);
+  args[m[1]] = value;
+}
 const host = args.host ?? "claude";
 if (!["claude", "codex"].includes(host)) throw new Error("--host must be claude or codex");
 if (host === "codex" && !args.model) throw new Error("--host codex needs an explicit --model (user config is ignored)");
@@ -79,6 +84,7 @@ function claudeOnce(cwd, prompt, extra = []) {
   ];
   return new Promise((resolvePromise, reject) => {
     const child = spawn("claude", argv, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+    child.on("error", (e) => reject(new Error(`could not start claude: ${e.message}`)));
     let out = "";
     let err = "";
     child.stdout.on("data", (d) => (out += d));
@@ -105,6 +111,7 @@ function codexOnce(cwd, prompt, sessionId) {
     : ["exec", ...common, "-s", "read-only", prompt];
   return new Promise((resolvePromise, reject) => {
     const child = spawn("codex", argv, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+    child.on("error", (e) => reject(new Error(`could not start codex: ${e.message}`)));
     let out = "";
     let err = "";
     child.stdout.on("data", (d) => (out += d));
@@ -256,12 +263,18 @@ async function runCase(c) {
 // Preflight: prove the skill body (not just its name) reaches the model. Up to 3 tries, because
 // the model occasionally answers NOT LOADED even when the body was injected (seen on Codex).
 let probe;
-for (let attempt = 0; attempt < 3; attempt++) {
-  probe = await subjectTurn(
-    personaDir,
-    `${invoke} Ignore the persona for this one reply. Quote the line that starts with "> Stable" from your loaded skill instructions, or reply NOT LOADED.`,
-  );
-  if (probe.result.includes("Stable identity, adaptive expression")) break;
+try {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    probe = await subjectTurn(
+      personaDir,
+      `${invoke} Ignore the persona for this one reply. Quote the line that starts with "> Stable" from your loaded skill instructions, or reply NOT LOADED.`,
+    );
+    if (probe.result.includes("Stable identity, adaptive expression")) break;
+  }
+} catch (e) {
+  rmSync(work, { recursive: true, force: true });
+  console.error(`Preflight failed: ${e.message}`);
+  process.exit(2);
 }
 if (!probe.result.includes("Stable identity, adaptive expression")) {
   rmSync(work, { recursive: true, force: true });

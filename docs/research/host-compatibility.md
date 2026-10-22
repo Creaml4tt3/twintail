@@ -21,7 +21,7 @@ Reserved words: the open spec lists none. Anthropic's platform docs add: `name` 
 Claude Code additionally refuses folder name `anthropic-skills` and reserves `synced` (https://code.claude.com/docs/en/skills) (verified).
 
 **2. Validator and length** (verified)
-- Official: `skills-ref validate ./my-skill` (reference library at https://github.com/agentskills/agentskills/tree/main/skills-ref). Spec text: "checks that your SKILL.md frontmatter is valid and follows all naming conventions". I did NOT install or run it (install method not stated on the spec page; check that repo's README).
+- Official: `skills-ref validate ./my-skill` (reference library at https://github.com/agentskills/agentskills/tree/main/skills-ref). Spec text: "checks that your SKILL.md frontmatter is valid and follows all naming conventions". I did NOT install or run it (install method not stated on the spec page; check that repo's README). (Update 2026-10-22: since run via `uvx`, result "Valid skill".)
 - Length: body "< 5000 tokens recommended"; "Keep your main SKILL.md under 500 lines" (agentskills.io spec, Progressive disclosure). Metadata ~100 tokens/skill. Same 500-line advice in Claude best-practices page.
 
 ## B. Claude Code
@@ -89,4 +89,4 @@ Claude Code additionally refuses folder name `anthropic-skills` and reserves `sy
 - Always-on (optional, secondary): Claude Code output style with `keep-coding-instructions: true`; or `--append-system-prompt-file` for launch-time. Neither is portable to Codex; skip for v1.
 - Test harness: `claude -p --model haiku --output-format json "/twintail <msg>" </dev/null`, capture `.session_id`, follow-ups with `--resume <id> "<msg>"`; add `--tools ""` (after the prompt) for pure-conversation tests; negative control = same prompt with no skill mention or with `--disable-slash-commands`. Codex mirror: `codex exec -s read-only "\$twintail <msg>"` then `codex exec resume -c 'sandbox_mode="read-only"' <id> "<msg>"`.
 - Assert on a deterministic marker or style rule (like the PINEAPPLE sentinel) in addition to any LLM-judged tone checks; run on haiku, sonnet and opus per Anthropic's testing checklist.
-- Open items: run `skills-ref validate` (install steps unverified); test post-compaction persistence; confirm claude.ai zip layout before promising upload support.
+- Open items: ~~run `skills-ref validate`~~ (since run via `uvx`: "Valid skill", 2026-10-22); test post-compaction persistence; confirm claude.ai zip layout before promising upload support.

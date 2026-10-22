@@ -26,7 +26,7 @@ What it is designed **not** to do (these are instructions to the model, so behav
 npx skills add Creaml4tt3/twintail -g -a claude-code -a codex
 ```
 
-This uses the open [`skills` CLI](https://skills.sh). It copies or links `skills/twintail-tsundere/` into `~/.claude/skills/` and `~/.agents/skills/`.
+This uses the open [`skills` CLI](https://skills.sh) (tested with v1.7.4 from a local checkout of this repo). It copies `skills/twintail-tsundere/` into `~/.claude/skills/` and `~/.agents/skills/`. Installing from GitHub by `owner/repo`, as above, is what the CLI is built for, but it has not yet been tested against the published repo.
 
 - Drop `-g` to install into the current project instead.
 - Drop `-a …` to choose agents interactively.
@@ -49,10 +49,10 @@ For a project install shared through a repo, copy the folder to `<project>/.clau
 
 | Host | Command | Tested |
 |---|---|---|
-| Claude Code | `/twintail-tsundere` | Opus 5.5 94%, Sonnet 5.5 92%, Haiku 5.5 68% of eval case runs passed, 0 safety flags |
+| Claude Code | `/twintail-tsundere` | Opus 5.5 94%, Sonnet 5.5 92%, Haiku 5.5 68% of eval case runs passed, 0 safety flags. The Sonnet and Haiku runs used the text before one added code-fence line, and that line was spot-checked separately. |
 | Codex CLI | `$twintail-tsundere` in your prompt | `gpt-6-luna`, headless `codex exec` only: 68%, 1 honesty slip |
 
-Start a new session after installing. You can also ask for it by name ("use the Twintail persona"), but the explicit command is the reliable path. The persona is noticeably fainter on Haiku and Codex. On Codex, one run claimed the user's message "came through twice" when it hadn't. Other Codex models and the interactive TUI are not evaluated. Full results are in [evals/RESULTS.md](evals/RESULTS.md).
+Start a new session after installing. The explicit command is the reliable path. Asking by name ("use the Twintail persona") may also work, because the host can match that request against the skill description. The persona is noticeably fainter on Haiku and Codex. On Codex, one run claimed the user's message "came through twice" when it hadn't. Other Codex models and the interactive TUI are not evaluated. Full results are in [evals/RESULTS.md](evals/RESULTS.md).
 
 ### Always on in Claude Code (optional output style)
 
@@ -78,7 +78,7 @@ The frontmatter uses only fields defined in the spec, and the official `skills-r
 
 ## Activation and persistence: read this
 
-- **The skill is opt-in, not always-on.** An Agent Skill loads when you invoke it (`/twintail-tsundere` or `$twintail-tsundere`), or when the model decides your request matches the description. An unrelated prompt in a fresh session does not turn it on.
+- **The skill is opt-in, not always-on.** It loads when you invoke it (`/twintail-tsundere` or `$twintail-tsundere`). It can also load when you ask for Twintail by name, because hosts match requests against the skill description. Its description tells the model to load it only on an explicit request. An unrelated prompt in a fresh session does not turn it on (tested on Claude Code).
 - **Once invoked, it lasts for the session** (Claude Code). In headless multi-turn eval runs, the persona held across later resumed turns. In very long sessions, Claude Code re-attaches only a budgeted part of each skill after context compaction ([docs](https://code.claude.com/docs/en/skills)). Re-invoke the skill if the voice fades. We have not tested post-compaction behaviour.
 - **Nothing persists between sessions.** Each new session starts at default warmth.
 - **To turn it off**, say "stop the persona" or "normal mode".

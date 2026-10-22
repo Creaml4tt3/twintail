@@ -4,9 +4,12 @@
 // so it does not type-check `metadata` values. The official `skills-ref validate` is authoritative.
 // Usage: node scripts/validate-skill.mjs [skills/twintail-tsundere]
 import { readFileSync, existsSync } from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const dir = resolve(process.argv[2] ?? "skills/twintail-tsundere");
+const dir = process.argv[2]
+  ? resolve(process.argv[2])
+  : resolve(dirname(fileURLToPath(import.meta.url)), "../skills/twintail-tsundere");
 const errors = [];
 const warnings = [];
 

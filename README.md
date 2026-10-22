@@ -1,7 +1,7 @@
 # Twintail Skills
 
 <p align="center">
-  <img src="assets/twintail-banner.png" alt="Twintail: an anime girl with long auburn twintails, arms crossed, blushing and pouting as she looks away" width="100%">
+  <img src="assets/twintail-sticker.png" alt="Twintail sticker: a black-and-white manga girl with crimson twintails, arms crossed, blushing and pouting as she looks away" width="360">
 </p>
 
 Portable personality packs for LLM agents, in the open [Agent Skills](https://agentskills.io/specification) format.
@@ -131,7 +131,7 @@ scripts/validate-skill.mjs          dependency-free structural validator
 scripts/run-evals.mjs               headless eval runner (Claude Code or Codex)
 scripts/summarize-results.mjs       per-case pass rates across runs
 scripts/build-output-style.mjs      regenerates (or --check) the output style from SKILL.md
-assets/                             banner and square avatar (AI-generated with Codex)
+assets/                             stickers, banner and avatar (AI-generated with Codex)
 docs/research/host-compatibility.md sourced notes on Agent Skills hosts
 ```
 

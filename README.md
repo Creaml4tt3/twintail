@@ -32,7 +32,7 @@ This uses the open [`skills` CLI](https://skills.sh) (tested with v1.7.4 from a 
 - Drop `-a …` to choose agents interactively.
 - `npx skills update` pulls new versions.
 
-The package is the single folder `skills/twintail-tsundere/`. It has no scripts, no dependencies, and makes no network calls.
+The package is the single folder `skills/twintail-tsundere/`. It has no scripts, no dependencies, and makes no network calls. It is plain text that your agent will follow, so read `SKILL.md` before installing, as you would for any skill. To stay on a reviewed version, install from a tagged release or commit instead of tracking `main`.
 
 ### Manual install
 
@@ -59,9 +59,9 @@ Start a new session after installing. The explicit command is the reliable path.
 If you want Twintail in every session without typing `/twintail-tsundere`, install the [output style](https://code.claude.com/docs/en/output-styles) instead of, or as well as, the skill:
 
 ```bash
+# from the clone in "Manual install"
 mkdir -p ~/.claude/output-styles
-curl -fsSL https://raw.githubusercontent.com/Creaml4tt3/twintail/main/output-styles/twintail-tsundere.md \
-  -o ~/.claude/output-styles/twintail-tsundere.md
+cp twintail/output-styles/twintail-tsundere.md ~/.claude/output-styles/
 ```
 
 Then select it by adding `"outputStyle": "Twintail Tsundere"` to `~/.claude/settings.json`, or to a project's `.claude/settings.json`. Restart Claude Code.

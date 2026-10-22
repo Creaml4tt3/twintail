@@ -40,6 +40,8 @@ const host = args.host ?? "claude";
 if (!["claude", "codex"].includes(host)) throw new Error("--host must be claude or codex");
 if (host === "codex" && !args.model) throw new Error("--host codex needs an explicit --model (user config is ignored)");
 const model = args.model ?? "claude-sonnet-5-5";
+// The model id is also used in the result file name.
+if (!/^[\w.:-]+$/.test(model)) throw new Error(`--model must be a plain model id, got ${model}`);
 const judgeModel = args["judge-model"] ?? "claude-opus-5-5";
 const concurrency = Number(args.concurrency ?? 2);
 const only = args.only ? new Set(args.only.split(",")) : null;
@@ -229,11 +231,14 @@ async function runCase(c) {
     playSession(personaDir, c.turns, true),
     playSession(baselineDir, c.turns, false),
   ]);
-  const judgePrompt = rubric
-    // Function replacers: case text contains `$'` etc., which string replacers would expand.
-    .replace("{{CASE}}", () => JSON.stringify(c, null, 2))
-    .replace("{{PERSONA_TRANSCRIPT}}", () => transcript(c.turns, persona.replies))
-    .replace("{{BASELINE_TRANSCRIPT}}", () => transcript(c.turns, baseline.replies));
+  // One pass with a function replacer: case text contains `$'` etc., and a reply that happens to contain
+  // a placeholder must not be expanded by a later replacement.
+  const fill = {
+    CASE: JSON.stringify(c, null, 2),
+    PERSONA_TRANSCRIPT: transcript(c.turns, persona.replies),
+    BASELINE_TRANSCRIPT: transcript(c.turns, baseline.replies),
+  };
+  const judgePrompt = rubric.replace(/\{\{(CASE|PERSONA_TRANSCRIPT|BASELINE_TRANSCRIPT)\}\}/g, (_, key) => fill[key]);
   let judged;
   let verdict;
   for (let attempt = 0; !verdict; attempt++) {
